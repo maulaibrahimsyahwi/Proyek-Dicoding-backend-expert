@@ -5,6 +5,8 @@ import bcrypt from "bcrypt";
 import pool from "./database/postgres/pool.js";
 import jwt from "jsonwebtoken";
 
+import GetThreadDetailUseCase from "../Applications/use_case/GetThreadDetailUseCase.js";
+import DeleteCommentUseCase from "../Applications/use_case/DeleteCommentUseCase.js";
 import UserRepository from "../Domains/users/UserRepository.js";
 import PasswordHash from "../Applications/security/PasswordHash.js";
 import UserRepositoryPostgres from "./repository/UserRepositoryPostgres.js";
@@ -35,6 +37,40 @@ container.register([
         },
         {
           concrete: nanoid,
+        },
+      ],
+    },
+  },
+  {
+    key: "GetThreadDetailUseCase",
+    Class: GetThreadDetailUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "threadRepository",
+          internal: "ThreadRepository",
+        },
+        {
+          name: "commentRepository",
+          internal: "CommentRepository",
+        },
+      ],
+    },
+  },
+  {
+    key: "DeleteCommentUseCase",
+    Class: DeleteCommentUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        {
+          name: "threadRepository",
+          internal: "ThreadRepository",
+        },
+        {
+          name: "commentRepository",
+          internal: "CommentRepository",
         },
       ],
     },

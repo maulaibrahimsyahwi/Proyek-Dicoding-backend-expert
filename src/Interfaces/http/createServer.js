@@ -4,6 +4,7 @@ import DomainErrorTranslator from "../../Commons/exceptions/DomainErrorTranslato
 import users from "../../Interfaces/http/api/users/index.js";
 import authentications from "../../Interfaces/http/api/authentications/index.js";
 import threads from "../../Interfaces/http/api/threads/index.js";
+import comments from "../../Interfaces/http/api/comments/index.js";
 
 const createServer = async (container) => {
   const app = express();
@@ -13,6 +14,7 @@ const createServer = async (container) => {
   app.use("/users", users(container));
   app.use("/authentications", authentications(container));
   app.use("/threads", threads(container));
+  app.use("/", comments(container));
 
   app.use((error, req, res, next) => {
     const translatedError = DomainErrorTranslator.translate(error);
