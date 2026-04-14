@@ -7,12 +7,9 @@
   "scripts": {
     "start": "node src/app.js",
     "start:dev": "nodemon src/app.js",
-    "test": "vitest --run",
-    "test:watch": "vitest --watch",
-    "test:coverage": "vitest --coverage",
-    "migrate": "node-pg-migrate",
-    "migrate:test": "node-pg-migrate --envPath .test.env",
-    "lint": "eslint ./"
+    "test": "vitest --run --fileParallelism=false",
+    "migrate": "node-pg-migrate up",
+    "migrate:test": "node-pg-migrate --envPath .test.env up"
   },
   "keywords": [],
   "author": "",
