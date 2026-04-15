@@ -3,6 +3,7 @@ import pool from "../../database/postgres/pool.js";
 import UsersTableTestHelper from "../../../../tests/UsersTableTestHelper.js";
 import ThreadsTableTestHelper from "../../../../tests/ThreadsTableTestHelper.js";
 import CommentsTableTestHelper from "../../../../tests/CommentsTableTestHelper.js";
+import LikesTableTestHelper from "../../../../tests/LikesTableTestHelper.js";
 import container from "../../container.js";
 import createServer from "../createServer.js";
 import JwtTokenManager from "../../security/JwtTokenManager.js";
@@ -14,6 +15,7 @@ describe("/threads/{threadId}/comments endpoint", () => {
   });
 
   afterEach(async () => {
+    await LikesTableTestHelper.cleanTable();
     await CommentsTableTestHelper.cleanTable();
     await ThreadsTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
@@ -143,6 +145,70 @@ describe("/threads/{threadId}/comments endpoint", () => {
       );
 
       expect(response.status).toEqual(401);
+      expect(response.body.status).toEqual("fail");
+    });
+  });
+
+  describe("when PUT /threads/{threadId}/comments/{commentId}/likes", () => {
+    it("should response 200 and return success status", async () => {
+      const app = await createServer(container);
+      const jwtTokenManager = new JwtTokenManager(jwt);
+      const accessToken = await jwtTokenManager.createAccessToken({
+        id: "user-123",
+        username: "dicoding",
+      });
+
+      await UsersTableTestHelper.addUser({
+        id: "user-123",
+        username: "dicoding",
+      });
+      await ThreadsTableTestHelper.addThread({
+        id: "thread-123",
+        owner: "user-123",
+      });
+      await CommentsTableTestHelper.addComment({
+        id: "comment-123",
+        threadId: "thread-123",
+        owner: "user-123",
+      });
+
+      const response = await request(app)
+        .put("/threads/thread-123/comments/comment-123/likes")
+        .set("Authorization", `Bearer ${accessToken}`);
+
+      expect(response.status).toEqual(200);
+      expect(response.body.status).toEqual("success");
+    });
+
+    it("should response 401 when no token provided", async () => {
+      const app = await createServer(container);
+
+      const response = await request(app).put(
+        "/threads/thread-123/comments/comment-123/likes",
+      );
+
+      expect(response.status).toEqual(401);
+      expect(response.body.status).toEqual("fail");
+    });
+
+    it("should response 404 when thread or comment not found", async () => {
+      const app = await createServer(container);
+      const jwtTokenManager = new JwtTokenManager(jwt);
+      const accessToken = await jwtTokenManager.createAccessToken({
+        id: "user-123",
+        username: "dicoding",
+      });
+
+      await UsersTableTestHelper.addUser({
+        id: "user-123",
+        username: "dicoding",
+      });
+
+      const response = await request(app)
+        .put("/threads/thread-xxx/comments/comment-xxx/likes")
+        .set("Authorization", `Bearer ${accessToken}`);
+
+      expect(response.status).toEqual(404);
       expect(response.body.status).toEqual("fail");
     });
   });

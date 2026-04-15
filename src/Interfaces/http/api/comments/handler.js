@@ -5,6 +5,7 @@ class CommentsHandler {
     this._container = container;
     this.postCommentHandler = this.postCommentHandler.bind(this);
     this.deleteCommentHandler = this.deleteCommentHandler.bind(this);
+    this.putLikeCommentHandler = this.putLikeCommentHandler.bind(this);
   }
 
   async postCommentHandler(req, res, next) {
@@ -65,6 +66,37 @@ class CommentsHandler {
       );
 
       await deleteCommentUseCase.execute({ threadId, commentId, owner });
+
+      return res.status(200).json({
+        status: "success",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async putLikeCommentHandler(req, res, next) {
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        throw new AuthenticationError("Missing authentication");
+      }
+
+      const token = authHeader.split(" ")[1];
+      const authenticationTokenManager = this._container.getInstance(
+        "AuthenticationTokenManager",
+      );
+
+      await authenticationTokenManager.verifyAccessToken(token);
+      const { id: owner } =
+        await authenticationTokenManager.decodePayload(token);
+
+      const { threadId, commentId } = req.params;
+      const toggleLikeCommentUseCase = this._container.getInstance(
+        "ToggleLikeCommentUseCase",
+      );
+
+      await toggleLikeCommentUseCase.execute({ threadId, commentId, owner });
 
       return res.status(200).json({
         status: "success",

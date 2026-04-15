@@ -19,6 +19,7 @@ describe("a DetailComment entities", () => {
       date: "2021-08-08T07:22:33.555Z",
       content: "sebuah komentar",
       isDelete: "false",
+      likeCount: "0",
     };
 
     expect(() => new DetailComment(payload)).toThrowError(
@@ -33,6 +34,7 @@ describe("a DetailComment entities", () => {
       date: "2021-08-08T07:22:33.555Z",
       content: "sebuah komentar",
       isDelete: false,
+      likeCount: 5,
     };
 
     const detailComment = new DetailComment(payload);
@@ -41,6 +43,7 @@ describe("a DetailComment entities", () => {
     expect(detailComment.username).toEqual(payload.username);
     expect(detailComment.date).toEqual(payload.date);
     expect(detailComment.content).toEqual(payload.content);
+    expect(detailComment.likeCount).toEqual(payload.likeCount);
   });
 
   it('should modify content to "**komentar telah dihapus**" when isDelete is true', () => {
@@ -50,6 +53,7 @@ describe("a DetailComment entities", () => {
       date: "2021-08-08T07:26:21.338Z",
       content: "sebuah komentar",
       isDelete: true,
+      likeCount: 0,
     };
 
     const detailComment = new DetailComment(payload);
@@ -58,5 +62,6 @@ describe("a DetailComment entities", () => {
     expect(detailComment.username).toEqual(payload.username);
     expect(detailComment.date).toEqual(payload.date);
     expect(detailComment.content).toEqual("**komentar telah dihapus**");
+    expect(detailComment.likeCount).toEqual(payload.likeCount);
   });
 });

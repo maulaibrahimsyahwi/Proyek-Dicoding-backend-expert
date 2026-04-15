@@ -8,6 +8,7 @@ import UserRepositoryPostgres from "./repository/UserRepositoryPostgres.js";
 import AuthenticationRepositoryPostgres from "./repository/AuthenticationRepositoryPostgres.js";
 import ThreadRepositoryPostgres from "./repository/ThreadRepositoryPostgres.js";
 import CommentRepositoryPostgres from "./repository/CommentRepositoryPostgres.js";
+import LikeRepositoryPostgres from "./repository/LikeRepositoryPostgres.js";
 
 import BcryptPasswordHash from "./security/BcryptPasswordHash.js";
 import JwtTokenManager from "./security/JwtTokenManager.js";
@@ -20,6 +21,7 @@ import AddThreadUseCase from "../Applications/use_case/AddThreadUseCase.js";
 import AddCommentUseCase from "../Applications/use_case/AddCommentUseCase.js";
 import DeleteCommentUseCase from "../Applications/use_case/DeleteCommentUseCase.js";
 import GetThreadDetailUseCase from "../Applications/use_case/GetThreadDetailUseCase.js";
+import ToggleLikeCommentUseCase from "../Applications/use_case/ToggleLikeCommentUseCase.js";
 
 const container = createContainer();
 
@@ -42,6 +44,11 @@ container.register([
   {
     key: "CommentRepository",
     Class: CommentRepositoryPostgres,
+    parameter: { dependencies: [{ concrete: pool }, { concrete: nanoid }] },
+  },
+  {
+    key: "LikeRepository",
+    Class: LikeRepositoryPostgres,
     parameter: { dependencies: [{ concrete: pool }, { concrete: nanoid }] },
   },
   {
@@ -157,6 +164,18 @@ container.register([
       dependencies: [
         { name: "threadRepository", internal: "ThreadRepository" },
         { name: "commentRepository", internal: "CommentRepository" },
+      ],
+    },
+  },
+  {
+    key: "ToggleLikeCommentUseCase",
+    Class: ToggleLikeCommentUseCase,
+    parameter: {
+      injectType: "destructuring",
+      dependencies: [
+        { name: "threadRepository", internal: "ThreadRepository" },
+        { name: "commentRepository", internal: "CommentRepository" },
+        { name: "likeRepository", internal: "LikeRepository" },
       ],
     },
   },

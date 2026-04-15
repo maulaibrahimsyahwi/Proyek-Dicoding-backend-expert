@@ -8,6 +8,10 @@ const createCommentsRouter = (handler) => {
     "/threads/:threadId/comments/:commentId",
     handler.deleteCommentHandler,
   );
+  router.put(
+    "/threads/:threadId/comments/:commentId/likes",
+    handler.putLikeCommentHandler,
+  );
 
   return router;
 };
