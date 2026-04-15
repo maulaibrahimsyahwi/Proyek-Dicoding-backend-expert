@@ -97,4 +97,36 @@ describe("ThreadRepositoryPostgres", () => {
       ).resolves.not.toThrowError(NotFoundError);
     });
   });
+
+  describe("getThreadById function", () => {
+    it("should throw NotFoundError when thread not found", async () => {
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
+      await expect(
+        threadRepositoryPostgres.getThreadById("thread-123"),
+      ).rejects.toThrowError(NotFoundError);
+    });
+
+    it("should return thread correctly", async () => {
+      const userId = "user-thread-get";
+      const threadId = "thread-get-1";
+      await UsersTableTestHelper.addUser({
+        id: userId,
+        username: "dicodingget",
+      });
+      await ThreadsTableTestHelper.addThread({
+        id: threadId,
+        owner: userId,
+        date: "2021-08-08T07:19:09.775Z",
+      });
+
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
+      const thread = await threadRepositoryPostgres.getThreadById(threadId);
+
+      expect(thread.id).toEqual(threadId);
+      expect(thread.title).toEqual("sebuah thread");
+      expect(thread.body).toEqual("isi thread");
+      expect(thread.date).toEqual("2021-08-08T07:19:09.775Z");
+      expect(thread.username).toEqual("dicodingget");
+    });
+  });
 });

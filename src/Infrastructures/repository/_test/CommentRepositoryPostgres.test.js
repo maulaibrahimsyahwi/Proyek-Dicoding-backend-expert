@@ -190,4 +190,40 @@ describe("CommentRepositoryPostgres", () => {
       expect(comments[0].is_delete).toEqual(true);
     });
   });
+
+  describe("getCommentsByThreadId function", () => {
+    it("should return comments correctly", async () => {
+      const userId = "user-comment-get";
+      const threadId = "thread-comment-get";
+      await UsersTableTestHelper.addUser({
+        id: userId,
+        username: "dicodingget",
+      });
+      await ThreadsTableTestHelper.addThread({ id: threadId, owner: userId });
+      await CommentsTableTestHelper.addComment({
+        id: "comment-1",
+        threadId,
+        owner: userId,
+        date: "2021-08-08",
+      });
+      await CommentsTableTestHelper.addComment({
+        id: "comment-2",
+        threadId,
+        owner: userId,
+        date: "2021-08-09",
+        isDelete: true,
+      });
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+      const comments =
+        await commentRepositoryPostgres.getCommentsByThreadId(threadId);
+
+      expect(comments).toHaveLength(2);
+      expect(comments[0].id).toEqual("comment-1");
+      expect(comments[0].username).toEqual("dicodingget");
+      expect(comments[0].isDelete).toEqual(false);
+      expect(comments[1].id).toEqual("comment-2");
+      expect(comments[1].isDelete).toEqual(true);
+    });
+  });
 });

@@ -18,7 +18,6 @@ class ThreadsHandler {
       const authenticationTokenManager = this._container.getInstance(
         "AuthenticationTokenManager",
       );
-
       await authenticationTokenManager.verifyAccessToken(token);
       const { id: owner } =
         await authenticationTokenManager.decodePayload(token);
