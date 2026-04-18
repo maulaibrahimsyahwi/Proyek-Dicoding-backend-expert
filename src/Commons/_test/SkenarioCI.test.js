@@ -1,5 +1,5 @@
 describe("Skenario CI", () => {
-  it("harus gagal", () => {
-    expect(1 + 1).toEqual(3);
+  it("harus berhasil", () => {
+    expect(1 + 1).toEqual(2);
   });
 });
