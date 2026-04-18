@@ -1,4 +1,4 @@
-Halo Reviewer, berikut adalah lampiran untuk pengujian proyek saya:
+Halo, berikut adalah lampiran untuk pengujian proyek saya:
 
 1. URL API (Production/HTTPS): https://maula-forumapi.ddns.net
 2. Link Repository GitHub : https://github.com/maulaibrahimsyahwi/Proyek-Dicoding-backend-expert
